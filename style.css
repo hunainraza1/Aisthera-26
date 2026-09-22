@@ -91,7 +91,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   outline-offset: 2px;
 }
 
-p { max-width: 66ch; }
+/* Constrain line length only for centered prose blocks (hero, section
+   leads, footer); a bare max-width with no margin:auto shrinks a <p> to
+   that width but leaves it pinned to the left edge instead of centering,
+   which was the site-wide "everything is stuck on the left" bug. */
+.hero p,
+.register-hero p,
+.lead,
+.site-footer p {
+  max-width: 66ch;
+  margin-inline: auto;
+}
 
 /* ---------- ornamental divider (replaces emoji separators) ---------- */
 .ornament {

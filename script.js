@@ -23,6 +23,11 @@ function populateTeamSizeOptions(min, max) {
   }
 }
 
+// Rebuilds the participant fields to match the current event + team size.
+// Does NOT touch the teamSize <select>'s own options — that only happens
+// when the EVENT changes (see onEventChange below). Rebuilding a <select>'s
+// options while handling its own "change" event resets selectedIndex, which
+// was silently snapping the team size back to the minimum on every pick.
 function renderParticipants() {
   participantsWrap.innerHTML = '';
   const meta = getSelectedEventMeta();
@@ -39,7 +44,6 @@ function renderParticipants() {
   } else {
     // Variable range (e.g. Fashion Show 8-12, Reel Making 1-2)
     teamSizeRow.style.display = 'block';
-    populateTeamSizeOptions(meta.min, meta.max);
     count = parseInt(teamSize.value, 10) || meta.min;
   }
 
@@ -58,7 +62,15 @@ function renderParticipants() {
   }
 }
 
-eventName.addEventListener('change', renderParticipants);
+function onEventChange() {
+  const meta = getSelectedEventMeta();
+  if (meta && !(meta.fixedSize && meta.fixedSize > 0)) {
+    populateTeamSizeOptions(meta.min, meta.max);
+  }
+  renderParticipants();
+}
+
+eventName.addEventListener('change', onEventChange);
 teamSize.addEventListener('change', renderParticipants);
 
 // ---- Form submission ----
