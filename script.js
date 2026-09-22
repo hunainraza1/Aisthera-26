@@ -55,6 +55,16 @@ form.addEventListener('submit', async (e) => {
   const formData = new FormData(form);
   const data = {};
   formData.forEach((value, key) => { data[key] = value; });
+
+  // The teamSize <select> stays in the DOM (just hidden) for Solo
+  // registrations, so FormData always includes it. Only keep it when the
+  // registration is actually a Team, and set it explicitly to 1 for Solo.
+  if (data.regType === 'Solo') {
+    data.teamSize = '1';
+  } else if (data.regType !== 'Team') {
+    delete data.teamSize;
+  }
+
   data.submittedAt = new Date().toISOString();
 
   submitBtn.disabled = true;
