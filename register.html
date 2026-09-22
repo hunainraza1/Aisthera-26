@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Register — Aisthera '26</title>
+<meta name="description" content="Register for Aisthera '26 — solo or as a team of up to 12, depending on the event." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Playfair+Display:ital,wght@0,600;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">Aisthera<span class="accent">'26</span></a>
+    <div class="nav-links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#events">Events</a>
+      <a href="index.html#rules">Rules</a>
+      <a href="register.html" class="nav-cta active">Register</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="register-hero">
+    <p class="eyebrow">Aisthera '26</p>
+    <h1 style="font-size: clamp(2.2rem, 7vw, 3.2rem); margin: 10px 0 0;">Register</h1>
+    <p class="lead" style="margin: 14px auto 0;">
+      Register solo or as a team — team size depends on the event you're entering.
+      Fields below adjust automatically once you pick your event.
+    </p>
+  </section>
+
+  <div class="ornament" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.4-8.4C.8 9.7 1.6 6 4.7 4.8 7 3.9 9.3 4.9 12 7.6c2.7-2.7 5-3.7 7.3-2.8 3.1 1.2 3.9 4.9 2.1 7.8C18.7 16.65 12 21 12 21z"/></svg>
+  </div>
+
+  <form id="regForm" class="reg-form">
+
+    <div class="form-row">
+      <label for="collegeName">College Name *</label>
+      <input type="text" id="collegeName" name="collegeName" required />
+    </div>
+
+    <div class="form-row">
+      <label for="eventName">Event *</label>
+      <select id="eventName" name="eventName" required>
+        <option value="" disabled selected>Select an event</option>
+        <optgroup label="On-Stage">
+          <option value="Morphe - Fashion Show" data-fixed-size="0" data-min="8" data-max="12">Morphe — Fashion Show (8–12 members)</option>
+          <option value="Kenesia - Group Dance" data-fixed-size="0" data-min="5" data-max="8">Kenesia — Group Dance (5–8 members)</option>
+        </optgroup>
+        <optgroup label="Off-Stage">
+          <option value="T-Shirt Painting" data-fixed-size="1">T-Shirt Painting (Individual)</option>
+          <option value="Meme Making" data-fixed-size="1">Meme Making (Individual)</option>
+          <option value="Quiz" data-fixed-size="2">Quiz (Team of 2)</option>
+          <option value="Treasure Hunt" data-fixed-size="3">Treasure Hunt (Team of 3)</option>
+          <option value="Debate" data-fixed-size="2">Debate (Team of 2)</option>
+          <option value="Dioptra - Photography" data-fixed-size="1">Dioptra — Photography (Individual only)</option>
+          <option value="Diegesis - Short Film" data-fixed-size="0" data-min="4" data-max="6">Diēgēsis — Short Film (4–6 members)</option>
+          <option value="Doxa - Reel Making" data-fixed-size="0" data-min="1" data-max="2">Doxa — Reel Making (Individual or team of 2)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="form-row" id="teamSizeRow" style="display:none;">
+      <label for="teamSize">Team Size *</label>
+      <select id="teamSize" name="teamSize"></select>
+    </div>
+
+    <div id="participantsWrap"></div>
+
+    <div class="form-row">
+      <label for="teamLeadPhone">Team Lead / Contact Phone *</label>
+      <input type="tel" id="teamLeadPhone" name="teamLeadPhone" required placeholder="+91..." />
+    </div>
+
+    <div class="form-row">
+      <label for="teamLeadEmail">Team Lead / Contact Email *</label>
+      <input type="email" id="teamLeadEmail" name="teamLeadEmail" required />
+    </div>
+
+    <div class="form-row">
+      <label class="checkbox-row">
+        <input type="checkbox" id="agree" required />
+        I confirm all participants hold valid college ID cards and a permission letter will be submitted at registration, and agree to the General Rules.
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="submitBtn">Submit Registration</button>
+    <p id="formStatus" class="form-status" role="status"></p>
+  </form>
+
+</main>
+
+<footer class="site-footer">
+  <p>Aisthera '26 · Yenepoya School of Allied Health Sciences · Cogniverse Psychology Club</p>
+  <p class="footer-quote">"A different mind is a brighter wonderland."</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

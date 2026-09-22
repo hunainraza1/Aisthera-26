@@ -1,26 +1,54 @@
-// ---- Dynamic participant fields ----
-const regType = document.getElementById('regType');
+// ---- Dynamic participant fields, driven by the selected event ----
+const eventName = document.getElementById('eventName');
 const teamSizeRow = document.getElementById('teamSizeRow');
 const teamSize = document.getElementById('teamSize');
 const participantsWrap = document.getElementById('participantsWrap');
 
+function getSelectedEventMeta() {
+  const opt = eventName.options[eventName.selectedIndex];
+  if (!opt || !opt.value) return null;
+  const fixedSize = parseInt(opt.dataset.fixedSize, 10);
+  const min = parseInt(opt.dataset.min, 10);
+  const max = parseInt(opt.dataset.max, 10);
+  return { fixedSize, min, max };
+}
+
+function populateTeamSizeOptions(min, max) {
+  teamSize.innerHTML = '';
+  for (let n = min; n <= max; n++) {
+    const o = document.createElement('option');
+    o.value = String(n);
+    o.textContent = String(n);
+    teamSize.appendChild(o);
+  }
+}
+
 function renderParticipants() {
   participantsWrap.innerHTML = '';
-  let count = 1;
-
-  if (regType.value === 'Solo') {
-    count = 1;
-  } else if (regType.value === 'Team') {
-    count = parseInt(teamSize.value, 10) || 2;
-  } else {
+  const meta = getSelectedEventMeta();
+  if (!meta) {
+    teamSizeRow.style.display = 'none';
     return;
+  }
+
+  let count;
+  if (meta.fixedSize && meta.fixedSize > 0) {
+    // Fixed team size (e.g. Quiz = 2, Treasure Hunt = 3)
+    teamSizeRow.style.display = 'none';
+    count = meta.fixedSize;
+  } else {
+    // Variable range (e.g. Fashion Show 8-12, Reel Making 1-2)
+    teamSizeRow.style.display = 'block';
+    populateTeamSizeOptions(meta.min, meta.max);
+    count = parseInt(teamSize.value, 10) || meta.min;
   }
 
   for (let i = 1; i <= count; i++) {
     const block = document.createElement('div');
     block.className = 'participant-block';
+    const label = count === 1 ? 'Participant' : (i === 1 ? 'Participant 1 (Team Lead)' : 'Participant ' + i);
     block.innerHTML = `
-      <h5>${regType.value === 'Solo' ? 'Participant' : (i === 1 ? 'Participant 1 (Team Lead)' : 'Participant ' + i)}</h5>
+      <h5>${label}</h5>
       <div class="participant-fields">
         <input type="text" name="participant_${i}_name" placeholder="Full name" required />
         <input type="text" name="participant_${i}_idnum" placeholder="College ID number" required />
@@ -30,10 +58,7 @@ function renderParticipants() {
   }
 }
 
-regType.addEventListener('change', () => {
-  teamSizeRow.style.display = regType.value === 'Team' ? 'block' : 'none';
-  renderParticipants();
-});
+eventName.addEventListener('change', renderParticipants);
 teamSize.addEventListener('change', renderParticipants);
 
 // ---- Form submission ----
@@ -47,22 +72,21 @@ form.addEventListener('submit', async (e) => {
   status.className = 'form-status';
 
   if (typeof GOOGLE_SHEET_ENDPOINT === 'undefined' || !GOOGLE_SHEET_ENDPOINT) {
-    status.textContent = 'Registration isn\'t connected yet — the site owner needs to add the Google Sheet endpoint in config.js.';
+    status.textContent = "Registration isn't connected yet — the site owner needs to add the Google Sheet endpoint in config.js.";
     status.classList.add('error');
     return;
   }
 
+  const meta = getSelectedEventMeta();
   const formData = new FormData(form);
   const data = {};
   formData.forEach((value, key) => { data[key] = value; });
 
-  // The teamSize <select> stays in the DOM (just hidden) for Solo
-  // registrations, so FormData always includes it. Only keep it when the
-  // registration is actually a Team, and set it explicitly to 1 for Solo.
-  if (data.regType === 'Solo') {
-    data.teamSize = '1';
-  } else if (data.regType !== 'Team') {
-    delete data.teamSize;
+  // teamSize <select> is hidden (but still in the DOM) for fixed-size events,
+  // so compute the true participant count from the event itself rather than
+  // trusting whatever the hidden field happens to hold.
+  if (meta) {
+    data.teamSize = String(meta.fixedSize && meta.fixedSize > 0 ? meta.fixedSize : (parseInt(teamSize.value, 10) || meta.min));
   }
 
   data.submittedAt = new Date().toISOString();
