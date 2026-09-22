@@ -97,10 +97,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
    which was the site-wide "everything is stuck on the left" bug. */
 .hero p,
 .register-hero p,
-.lead,
 .site-footer p {
   max-width: 66ch;
   margin-inline: auto;
+}
+.lead {
+  max-width: 66ch;
 }
 
 /* ---------- ornamental divider (replaces emoji separators) ---------- */
