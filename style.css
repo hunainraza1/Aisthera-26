@@ -540,3 +540,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .venue-address { color: var(--ink-soft); }
 .venue-link { margin-bottom: 0 !important; }
+
+.venue-link a { display: inline-flex; align-items: center; gap: 8px; }
+.pin-icon { flex-shrink: 0; color: var(--gold); }
