@@ -507,3 +507,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .venue-link a { display: inline-flex; align-items: center; gap: 8px; }
 .pin-icon { flex-shrink: 0; color: var(--gold); }
+
+/* ---------- payment ---------- */
+.payment-box {
+  border: 1px solid var(--parchment-line);
+  border-top: 3px solid var(--gold);
+  background: var(--card-bg);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-radius: 3px;
+}
+.payment-box h5 { margin: 0 0 6px; font-size: 1.15rem; }
+.payment-box p { margin: 0 0 14px; color: var(--ink-soft); }
+.proof-row input[type="file"] { width: 100%; }

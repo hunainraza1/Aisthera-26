@@ -1,8 +1,17 @@
 /**
  * Aisthera '26 registration intake.
  * Paste this into Extensions > Apps Script on your Google Sheet, then deploy
- * as a Web App (see SETUP.md for full steps).
+ * as a Web App (see SETUP.md for full steps). After pasting this version,
+ * use Deploy > Manage deployments > Edit > New version, and approve the
+ * Google Drive permission when asked (payment proofs are saved to Drive).
  */
+const PROOF_FOLDER_NAME = 'Aisthera 26 Payment Proofs';
+
+function getProofFolder_() {
+  const it = DriveApp.getFoldersByName(PROOF_FOLDER_NAME);
+  return it.hasNext() ? it.next() : DriveApp.createFolder(PROOF_FOLDER_NAME);
+}
+
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const data = JSON.parse(e.postData.contents);
@@ -13,11 +22,11 @@ function doPost(e) {
       'Submitted At',
       'College Name',
       'Event',
-      'Registration Type',
       'Team Size',
-      'Team Lead Phone',
-      'Team Lead Email',
+      'College Student Representative',
+      'Representative Phone',
       'Participants (Name / College ID)',
+      'Payment Proofs',
     ]);
   }
 
@@ -31,15 +40,32 @@ function doPost(e) {
     i++;
   }
 
+  // Save each payment proof to Drive and keep its link
+  const proofLinks = [];
+  const proofs = data.proofs || [];
+  if (proofs.length) {
+    const folder = getProofFolder_();
+    const stamp = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyyMMdd-HHmmss');
+    const safe = function (s) { return String(s || '').replace(/[^\w\-]+/g, '_').slice(0, 40); };
+    proofs.forEach(function (p, idx) {
+      const blob = Utilities.newBlob(
+        Utilities.base64Decode(p.data),
+        p.type,
+        safe(data.collegeName) + '_' + safe(data.eventName) + '_P' + (idx + 1) + '_' + stamp + '_' + safe(p.name)
+      );
+      proofLinks.push('P' + (idx + 1) + ': ' + folder.createFile(blob).getUrl());
+    });
+  }
+
   sheet.appendRow([
     data.submittedAt || new Date().toISOString(),
     data.collegeName || '',
     data.eventName || '',
-    data.regType || '',
-    data.teamSize || (data.regType === 'Solo' ? 1 : ''),
-    data.teamLeadPhone || '',
-    data.teamLeadEmail || '',
+    data.teamSize || '',
+    data.repName || '',
+    data.repPhone || '',
     participants.join('; '),
+    proofLinks.join('\n'),
   ]);
 
   return ContentService

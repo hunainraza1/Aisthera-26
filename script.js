@@ -3,6 +3,7 @@ const eventName = document.getElementById('eventName');
 const teamSizeRow = document.getElementById('teamSizeRow');
 const teamSize = document.getElementById('teamSize');
 const participantsWrap = document.getElementById('participantsWrap');
+const proofWrap = document.getElementById('proofWrap');
 
 function getSelectedEventMeta() {
   const opt = eventName.options[eventName.selectedIndex];
@@ -30,6 +31,7 @@ function populateTeamSizeOptions(min, max) {
 // was silently snapping the team size back to the minimum on every pick.
 function renderParticipants() {
   participantsWrap.innerHTML = '';
+  proofWrap.innerHTML = '';
   const meta = getSelectedEventMeta();
   if (!meta) {
     teamSizeRow.style.display = 'none';
@@ -59,6 +61,14 @@ function renderParticipants() {
       </div>
     `;
     participantsWrap.appendChild(block);
+
+    const proof = document.createElement('div');
+    proof.className = 'form-row proof-row';
+    proof.innerHTML = `
+      <label for="proof_${i}">Proof of Payment${count === 1 ? '' : ' for Participant ' + i} *</label>
+      <input type="file" id="proof_${i}" name="proof_${i}" accept="image/*,application/pdf" required />
+    `;
+    proofWrap.appendChild(proof);
   }
 }
 
@@ -72,6 +82,34 @@ function onEventChange() {
 
 eventName.addEventListener('change', onEventChange);
 teamSize.addEventListener('change', renderParticipants);
+
+// ---- Payment proof helpers ----
+// Images are shrunk in the browser before upload so the whole registration
+// stays small; PDFs are sent as-is (up to 1.5 MB).
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+async function fileToPayload(file) {
+  if (file.type === 'application/pdf') {
+    if (file.size > 1.5 * 1024 * 1024) throw new Error('PDF too large (max 1.5 MB): ' + file.name);
+    return { name: file.name, type: file.type, data: await blobToBase64(file) };
+  }
+  if (!file.type.startsWith('image/')) throw new Error('Please upload an image or PDF: ' + file.name);
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, 1400 / Math.max(bmp.width, bmp.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bmp.width * scale);
+  canvas.height = Math.round(bmp.height * scale);
+  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.8));
+  return { name: file.name.replace(/\.[^.]+$/, '') + '.jpg', type: 'image/jpeg', data: await blobToBase64(blob) };
+}
 
 // ---- Form submission ----
 const form = document.getElementById('regForm');
@@ -92,7 +130,7 @@ form.addEventListener('submit', async (e) => {
   const meta = getSelectedEventMeta();
   const formData = new FormData(form);
   const data = {};
-  formData.forEach((value, key) => { data[key] = value; });
+  formData.forEach((value, key) => { if (!(value instanceof File)) data[key] = value; });
 
   // teamSize <select> is hidden (but still in the DOM) for fixed-size events,
   // so compute the true participant count from the event itself rather than
@@ -104,9 +142,15 @@ form.addEventListener('submit', async (e) => {
   data.submittedAt = new Date().toISOString();
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting...';
+  submitBtn.textContent = 'Uploading...';
 
   try {
+    data.proofs = [];
+    const proofInputs = form.querySelectorAll('input[type="file"]');
+    for (const input of proofInputs) {
+      if (input.files[0]) data.proofs.push(await fileToPayload(input.files[0]));
+    }
+
     await fetch(GOOGLE_SHEET_ENDPOINT, {
       method: 'POST',
       mode: 'no-cors', // Apps Script web apps don't return CORS headers; response is opaque
@@ -119,8 +163,10 @@ form.addEventListener('submit', async (e) => {
     form.reset();
     teamSizeRow.style.display = 'none';
     participantsWrap.innerHTML = '';
+    proofWrap.innerHTML = '';
   } catch (err) {
-    status.textContent = 'Something went wrong submitting your registration. Please check your connection and try again, or contact the organisers directly.';
+    const known = err && err.message && /^(Please upload|PDF too large)/.test(err.message);
+    status.textContent = known ? err.message : 'Something went wrong submitting your registration. Please check your connection and try again, or contact the organisers directly.';
     status.classList.add('error');
   } finally {
     submitBtn.disabled = false;
