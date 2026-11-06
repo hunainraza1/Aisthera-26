@@ -2,52 +2,19 @@
    AISTHERA '26 — Wonderland design tokens
    ============================================ */
 :root {
-  --parchment: #f8f0dc;
-  --parchment-deep: #efe2bd;
-  --parchment-line: #d8c393;
-  --ink: #2a1e14;
-  --ink-soft: #5b4a35;
-  --maroon: #5c1a24;
-  --maroon-bright: #8b2635;
-  --gold: #a67c3d;
-  --gold-bright: #c99a4e;
-  --card-bg: #fffdf6;
-  --shadow: 0 6px 24px rgba(46, 22, 12, 0.14);
-  --shadow-soft: 0 2px 10px rgba(46, 22, 12, 0.08);
+  --parchment: #b58450;
+  --parchment-deep: #a2733f;
+  --parchment-line: #8a5f33;
+  --ink: #2a1608;
+  --ink-soft: #3b2412;
+  --maroon: #3b0808;
+  --maroon-bright: #3b0808;
+  --gold: #e0922b;
+  --gold-bright: #e0922b;
+  --card-bg: #c29461;
+  --shadow: 0 6px 24px rgba(59, 8, 8, 0.28);
+  --shadow-soft: 0 2px 10px rgba(59, 8, 8, 0.18);
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --parchment: #191008;
-    --parchment-deep: #120c07;
-    --parchment-line: #4a3620;
-    --ink: #ecdfc7;
-    --ink-soft: #b8a480;
-    --maroon: #d68d97;
-    --maroon-bright: #e8a3ac;
-    --gold: #c99a4e;
-    --gold-bright: #e0b569;
-    --card-bg: #241a10;
-    --shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-    --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.35);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --parchment: #191008;
-  --parchment-deep: #120c07;
-  --parchment-line: #4a3620;
-  --ink: #ecdfc7;
-  --ink-soft: #b8a480;
-  --maroon: #d68d97;
-  --maroon-bright: #e8a3ac;
-  --gold: #c99a4e;
-  --gold-bright: #e0b569;
-  --card-bg: #241a10;
-  --shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-  --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.35);
-  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -65,9 +32,9 @@ body {
   font-size: 1.08rem;
   line-height: 1.65;
   background-image:
-    radial-gradient(circle at 8% 6%, rgba(166, 124, 61, 0.08), transparent 40%),
-    radial-gradient(circle at 94% 18%, rgba(92, 26, 36, 0.06), transparent 45%),
-    radial-gradient(circle at 50% 96%, rgba(166, 124, 61, 0.06), transparent 50%);
+    radial-gradient(circle at 8% 6%, rgba(224, 146, 43, 0.10), transparent 40%),
+    radial-gradient(circle at 94% 18%, rgba(59, 8, 8, 0.08), transparent 45%),
+    radial-gradient(circle at 50% 96%, rgba(224, 146, 43, 0.08), transparent 50%);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -193,7 +160,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-variant: small-caps;
   letter-spacing: 0.12em;
   font-size: 0.95rem;
-  color: var(--gold);
+  color: var(--maroon);
   font-weight: 600;
 }
 .hero h1 {
@@ -308,7 +275,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .rundown li::before {
   content: counter(rundown);
   font-family: 'Cinzel Decorative', serif;
-  color: var(--gold);
+  color: var(--maroon);
   font-size: 1.1rem;
   min-width: 1.6em;
   text-align: right;
@@ -360,7 +327,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .event-theme {
   font-size: 0.88rem;
   font-weight: 600;
-  color: var(--gold);
+  color: var(--maroon);
   margin: 0 0 10px;
   font-variant: small-caps;
   letter-spacing: 0.03em;
@@ -425,7 +392,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   padding-left: 22px;
   max-width: 740px;
 }
-.rules-list li::marker { color: var(--gold); }
+.rules-list li::marker { color: var(--maroon); }
 
 /* ---------- registration page ---------- */
 .register-hero {
@@ -501,10 +468,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   min-height: 1.2em;
 }
 .form-status.success { color: #2f6b3a; }
-:root[data-theme="dark"] .form-status.success { color: #7fce8e; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .form-status.success { color: #7fce8e; }
-}
 .form-status.error { color: var(--maroon-bright); }
 
 /* ---------- footer ---------- */
