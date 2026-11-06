@@ -525,3 +525,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* ---------- venue ---------- */
+.venue {
+  max-width: 740px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--parchment-line);
+}
+.venue p { margin: 0 0 8px; }
+.venue-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.venue-address { color: var(--ink-soft); }
+.venue-link { margin-bottom: 0 !important; }
